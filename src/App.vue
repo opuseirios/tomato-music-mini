@@ -1,22 +1,22 @@
 <template>
   <div id="app">
+    <main-header></main-header>
+    <tabs></tabs>
     <router-view/>
   </div>
 </template>
 
 <script>
+import MainHeader from "./components/mainHeader/mainHeader";
+import Tabs from "./components/tabs/tabs";
 export default {
-  name: 'App'
+  name: 'App',
+  components: {Tabs, MainHeader}
 }
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+
 }
 </style>
