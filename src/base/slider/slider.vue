@@ -44,10 +44,17 @@
         if(this.autoplay){
           this._play();
         }
-      }, 20)
+      }, 20);
+      window.addEventListener('resize',()=>{
+        if(!this.slider){
+          return;
+        }
+        this._setSliderWidth(true);
+        this.slider.refresh();
+      })
     },
     methods: {
-      _setSliderWidth() {
+      _setSliderWidth(flag) {
         /*1.设置slider-group的宽度
         * 2.将div添加class为slider-item
         * */
@@ -60,7 +67,7 @@
           slider.style.width = sliderWidth+'px';
           addClass(slider, 'slider-item');
         }
-        if(this.loop){
+        if(this.loop&&!flag){
           width+=2*sliderWidth;
         }
         this.$refs.sliderGroup.style.width = width+'px';
@@ -77,7 +84,21 @@
             threshold:.3
           }
         })
+        this.slider.on('scrollEnd',()=>{
+          this.currentPageIndex = this.slider.getCurrentPage().pageX;
+          this.currentPageIndex++;
+          this.pageNum = this.currentPageIndex;
+          if(this.currentPageIndex>=this.children.length-2){
+            this.currentPageIndex=0;
+          }
+          if(this.autoplay){
+            this._play();
+          }
+        })
 
+        this.slider.on('beforeScrollStart',()=>{
+          clearTimeout(this.timer);
+        })
       },
       _initDots(){
         this.dots = new Array(this.children.length);

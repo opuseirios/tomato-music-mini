@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import VueLazyLoad from 'vue-lazyload'
 
 /*引入fastclick，应用于整个页面*/
 import fastclick from 'fastclick'
@@ -12,6 +13,10 @@ fastclick.attach(document.body);
 import 'lib-flexible'
 
 Vue.config.productionTip = false
+
+Vue.use(VueLazyLoad,{
+  loading:require('./assets/imgs/default.png')
+})
 
 import './assets/scss/index.scss'
 
