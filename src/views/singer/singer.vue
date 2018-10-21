@@ -1,6 +1,7 @@
 <template>
   <div class='singer'>
-    <listview :singer-list="singerList"></listview>
+    <listview :singer-list="singerList" @select="selectSinger"></listview>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -10,6 +11,7 @@
   import {Singer} from "../../assets/js/singer";
   import Scroll from "../../base/scroll/scroll";
   import Listview from "../../components/listview/listview";
+  import {mapMutations} from 'vuex'
 
   const HOT_KEY = '热门';
   const HOT_SINGER_LENGTH = 10;
@@ -26,6 +28,12 @@
       }
     },
     methods: {
+      selectSinger(singer) {
+        this.setSinger(singer);
+        this.$router.push({
+          path:`/singer/${singer.mid}`
+        })
+      },
       _getSingerList() {
         getSingerListData().then((res) => {
           if (res.code === ERR_OK) {
@@ -43,37 +51,40 @@
         list.forEach((item, index) => {
           if (index < HOT_SINGER_LENGTH) {
             map.hot.items.push(new Singer({
-              mid:item.Fsinger_mid,
-              name:item.Fsinger_name
+              mid: item.Fsinger_mid,
+              name: item.Fsinger_name
             }))
           }
           const key = item.Findex;
-          if(!map[key]){
+          if (!map[key]) {
             map[key] = {
-              title:key,
-              items:[]
+              title: key,
+              items: []
             }
           }
           map[key].items.push(new Singer({
-            mid:item.Fsinger_mid,
-            name:item.Fsinger_name
+            mid: item.Fsinger_mid,
+            name: item.Fsinger_name
           }))
         })
         let hot = [];
         let rest = [];
-        for(let key in map){
+        for (let key in map) {
           let val = map[key];
-          if(val.title.match(/[a-zA-Z]/)){
+          if (val.title.match(/[a-zA-Z]/)) {
             rest.push(val);
-          }else if(val.title === HOT_KEY){
+          } else if (val.title === HOT_KEY) {
             hot.push(val)
           }
         }
-        rest.sort((a,b)=>{
-          return a.title.charCodeAt(0)-b.title.charCodeAt(0)
+        rest.sort((a, b) => {
+          return a.title.charCodeAt(0) - b.title.charCodeAt(0)
         })
-        return [...hot,...rest];
-      }
+        return [...hot, ...rest];
+      },
+      ...mapMutations({
+        setSinger:"SET_SINGER"
+      })
     }
   }
 </script>

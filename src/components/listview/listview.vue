@@ -11,7 +11,7 @@
       <li class="list-group" v-for="singerGroup in singerList" ref="listGroup">
         <h4 class="title">{{singerGroup.title}}</h4>
         <ul>
-          <li class="list-group-item" v-for="singer in singerGroup.items">
+          <li class="list-group-item" v-for="singer in singerGroup.items" @click="select(singer)">
             <div class="icon">
               <img v-lazy="singer.imgUrl" alt="">
             </div>
@@ -23,7 +23,7 @@
     <div class="list-shortcut" @touchstart="listTouchStart" @touchmove="listTouchMove" ref="listShortCut">
       <ul>
         <li ref="shortcutItem" class="item" :class="{'current':index===currentIndex}" :data-index="index"
-            v-for="(item,index) in shortcutList" @click="">{{item}}
+            v-for="(item,index) in shortcutList">{{item}}
         </li>
       </ul>
     </div>
@@ -102,6 +102,9 @@
       },
       scroll(pos) {
         this.scrollY = pos.y;
+      },
+      select(singer){
+        this.$emit('select',singer);
       },
       _scrollTo(index) {
         if (!index) {
