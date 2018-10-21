@@ -1,4 +1,4 @@
-
+/*添加类名*/
 export function addClass(dom,className) {
   if(hasClass(dom,className)){
     return
@@ -14,3 +14,15 @@ function hasClass(dom,className) {
       return item.trim() === className.trim()
   })>-1;
 }
+
+/*获取属性*/
+export function getData(el, attr, value) {
+  const prefix = 'data-';
+  attr = prefix + attr;
+  if (value) {
+    return el.setAttribute(attr, value)
+  } else {
+    return el.getAttribute(attr);
+  }
+}
+
