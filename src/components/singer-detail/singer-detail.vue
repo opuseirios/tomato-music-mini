@@ -43,7 +43,7 @@
     },
     methods:{
       _getSongList(){
-        if(!this.singer){
+        if(!this.singer.mid){
           this.$router.back();
         }
         getSongListData(this.singer.mid).then((res)=>{
