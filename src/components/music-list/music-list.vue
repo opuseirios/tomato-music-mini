@@ -22,7 +22,7 @@
       @scroll="scroll"
     >
       <div class="song-list-wrapper">
-        <song-list :song-list="songList"></song-list>
+        <song-list :song-list="songList" @select="selectItem"></song-list>
       </div>
       <div class="loading-container" v-show="!songList.length">
         <loading text=""></loading>
@@ -36,6 +36,7 @@
   import Scroll from "../../base/scroll/scroll";
   import {prefixStyle} from "../../assets/js/dom";
   import Loading from "../../base/loading/loading";
+  import {mapActions} from 'vuex'
 
   const transform = prefixStyle('transform');
   const backDrop = prefixStyle('backdrop-filter');
@@ -83,7 +84,16 @@
       },
       scroll(pos) {
         this.scrollY = pos.y;
-      }
+      },
+      selectItem(item,index) {
+        this.selectPlay({
+          list:this.songList,
+          index:index
+        })
+      },
+      ...mapActions([
+        'selectPlay'
+      ])
     },
     watch: {
       scrollY(newY) {
@@ -155,13 +165,13 @@
       height: 0;
       padding-top: 70%;
       background-size: cover;
-      .play-btn-wrapper{
+      .play-btn-wrapper {
         position: absolute;
         left: 0;
         right: 0;
         bottom: 40px;
         z-index: 12;
-        .play-btn{
+        .play-btn {
           width: 270px;
           height: 60px;
           margin: 0 auto;
@@ -169,13 +179,13 @@
           border-radius: 60px;
           color: $color-theme;
           font-size: 0;
-          .icon-play{
+          .icon-play {
             padding-left: 40px;
             line-height: 60px;
             font-size: $font-size-medium-x;
             vertical-align: top;
           }
-          .text{
+          .text {
             line-height: 60px;
             margin-left: 10px;
             font-size: $font-size-medium;
@@ -210,7 +220,7 @@
     .song-list-wrapper {
       padding: 40px 60px;
     }
-    .loading-container{
+    .loading-container {
       position: absolute;
       left: 50%;
       top: 30%;

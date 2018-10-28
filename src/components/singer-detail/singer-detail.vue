@@ -1,6 +1,10 @@
 <template>
   <transition name="slide">
-    <music-list :bg-image="bgImage" :title="title" :song-list="songList"></music-list>
+    <music-list
+      :bg-image="bgImage"
+      :title="title"
+      :song-list="songList"
+    ></music-list>
   </transition>
 </template>
 
@@ -14,25 +18,25 @@
   export default {
     name: "singer-detail",
     components: {MusicList},
-    created(){
-      setTimeout(()=>{
+    created() {
+      setTimeout(() => {
         this._getSongList();
-      },20)
+      }, 20)
     },
-    data(){
-      return{
-        songList:[]
+    data() {
+      return {
+        songList: []
       }
     },
-    computed:{
-      bgImage(){
-        if(!this.singer){
+    computed: {
+      bgImage() {
+        if (!this.singer) {
           return
         }
         return this.singer.imgUrl;
       },
-      title(){
-        if(!this.singer){
+      title() {
+        if (!this.singer) {
           return
         }
         return this.singer.name;
@@ -41,20 +45,20 @@
         'singer'
       ])
     },
-    methods:{
-      _getSongList(){
-        if(!this.singer.mid){
+    methods: {
+      _getSongList() {
+        if (!this.singer.mid) {
           this.$router.back();
         }
-        getSongListData(this.singer.mid).then((res)=>{
-           if(res.code === ERR_OK){
+        getSongListData(this.singer.mid).then((res) => {
+          if (res.code === ERR_OK) {
             this.songList = this._normaliseSongList(res.data.list);
-           }
+          }
         })
       },
-      _normaliseSongList(list){
+      _normaliseSongList(list) {
         let songs = [];
-        list.forEach((item)=>{
+        list.forEach((item) => {
           songs.push(createSong(item.musicData))
         })
         return songs;
