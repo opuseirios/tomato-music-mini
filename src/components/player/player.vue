@@ -255,6 +255,9 @@
     },
     watch: {
       currentSong(newSong) {
+        if(!newSong){
+          return
+        }
         this.$nextTick(() => {
           this.$refs.audio.play();
           this.setPlaying(true);
