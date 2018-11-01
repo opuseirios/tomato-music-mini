@@ -20,7 +20,7 @@
         </div>
         <div class="middle" ref="middle">
           <div class="middle-l">
-            <div class="cd-wrapper" ref="cdWrapper">
+            <div class="cd-wrapper"  ref="cdWrapper">
               <div class="cd" :class="playCls">
                 <img :src="currentSong.image" alt="">
               </div>
@@ -37,7 +37,7 @@
           </div>
           <div class="operators">
             <div class="icon i-left">
-              <i :class="modeIcon" @click="changeMode"></i>
+              <i class="icon-sequence"></i>
             </div>
             <div class="icon i-left">
               <i class="icon-prev" @click="prev"></i>
@@ -88,8 +88,6 @@
   import animations from 'create-keyframe-animation'
   import {prefixStyle} from "../../assets/js/dom";
   import ProgressBar from "../../base/progress-bar/progress-bar";
-  import {playMode} from "../../assets/js/config";
-  import {shuffle} from "../../assets/js/shuffle";
 
   const transform = prefixStyle('transform');
   export default {
@@ -97,19 +95,16 @@
     components: {ProgressBar},
     computed: {
       playIcon() {
-        return this.playing ? 'icon-pause' : 'icon-play'
+        return this.playing ? 'icon-pause':'icon-play'
       },
       playCls() {
         return this.playing ? 'play' : 'play pause'
       },
-      playMiniIcon() {
+      playMiniIcon(){
         return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
       },
-      percent() {
-        return this.currentTime / this.currentSong.duration;
-      },
-      modeIcon() {
-        return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
+      percent(){
+        return this.currentTime/this.currentSong.duration;
       },
       ...mapGetters([
         'currentSong',
@@ -117,15 +112,14 @@
         'currentIndex',
         'sequenceList',
         'fullScreen',
-        'playing',
-        'mode'
+        'playing'
       ])
     },
-    data() {
-      return {
+    data(){
+      return{
         /*歌曲就绪*/
-        songReady: false,
-        currentTime: 0
+        songReady:false,
+        currentTime:0
       }
     },
     mounted() {
@@ -181,76 +175,51 @@
         this.setPlaying(!this.playing);
       },
       /*上一首*/
-      prev() {
-        if (!this.songReady) {
+      prev(){
+        if(!this.songReady){
           return
         }
         let index = this.currentIndex;
-        if (index === 0) {
+        if(index === 0){
           index = this.playlist.length
         }
         index--;
         this.setCurrentIndex(index);
-        if (!this.playing) {
-          this.togglePlay();
-        }
       },
       /*下一首*/
-      next() {
-        if (!this.songReady) {
+      next(){
+        if(!this.songReady){
           return;
         }
         let index = this.currentIndex;
-        if (index === this.playlist.length - 1) {
+        if(index===this.playlist.length-1){
           index = -1;
         }
         index++;
         this.setCurrentIndex(index);
-        if (!this.playing) {
-          this.togglePlay();
-        }
       },
       /*audio标签就绪的函数*/
-      ready() {
+      ready(){
         this.songReady = true;
       },
       /*audio标签错误的函数*/
-      error() {
+      error(){
         this.next();
       },
       /*audio结束后*/
-      end() {
+      end(){
         this.next();
       },
       /*audio的实时*/
-      updateTime() {
+      updateTime(){
         this.currentTime = this.$refs.audio.currentTime;
       },
-      percentChange(percent) {
+      percentChange(percent){
         let time = percent * this.currentSong.duration;
         this.$refs.audio.currentTime = time;
-        if (!this.playing) {
+        if(!this.playing){
           this.togglePlay();
         }
-      },
-      /*更换播放模式*/
-      changeMode() {
-        const mode = (this.mode + 1) % 3;
-        this.setPlayMode(mode);
-        let list = null;
-        if (mode === playMode.random) {
-          list = shuffle(this.sequenceList);
-        } else {
-          list = this.sequenceList;
-        }
-        this._resetCurrentIndex(list);
-        this.setPlayList(list);
-      },
-      _resetCurrentIndex(list) {
-        let index = list.findIndex((item) => {
-          return item.id === this.currentSong.id;
-        })
-        this.setCurrentIndex(index);
       },
       _getPosAndScale() {
         const targetWidth = 40;
@@ -264,16 +233,16 @@
         return {x, y, scale};
       },
       /*将时间格式化*/
-      _formatTime(currentTime) {
+      _formatTime(currentTime){
         let time = parseInt(currentTime);
-        const min = parseInt(time / 60);
-        const sec = this._pad(time % 60);
+        const min = parseInt(time/60);
+        const sec = this._pad(time%60);
         return `${min}:${sec}`
       },
-      _pad(num, n = 2) {
+      _pad(num,n=2){
         let len = num.toString().length;
-        while (len < n) {
-          num = '0' + num;
+        while (len<n){
+          num = '0'+num;
           len++;
         }
         return num;
@@ -281,28 +250,18 @@
       ...mapMutations({
         setFullScreen: "SET_FULL_SCREEN",
         setPlaying: "SET_PLAYING_STATE",
-        setCurrentIndex: 'SET_CURRENT_INDEX',
-        setPlayList: "SET_PLAY_LIST",
-        setPlayMode: "SET_PLAY_MODE"
+        setCurrentIndex:'SET_CURRENT_INDEX'
       })
     },
     watch: {
-      currentSong(newSong, oldSong) {
-        if (!newSong) {
-          return;
-        }
-        if (oldSong && oldSong.id === newSong.id) {
-          return;
-        }
+      currentSong(newSong) {
         this.$nextTick(() => {
           this.$refs.audio.play();
+          this.setPlaying(true);
         })
       },
-      playing(newPlaying) {
-        const audio = this.$refs.audio;
-        if (audio) {
-          newPlaying ? audio.play() : audio.pause();
-        }
+      playing(newPlaying){
+        newPlaying?this.$refs.audio.play():this.$refs.audio.pause();
       }
     }
   }
@@ -411,25 +370,25 @@
         bottom: 100px;
         left: 0;
         width: 100%;
-        .progress-wrapper {
+        .progress-wrapper{
           display: flex;
           width: 80%;
           margin: 0 auto;
           align-items: center;
-          .time {
+          .time{
             flex: 0 0 60px;
             width: 60px;
             font-size: $font-size-small;
             color: $color-text;
             line-height: 60px;
-            &.time-l {
+            &.time-l{
               text-align: left;
             }
-            &.time-r {
+            &.time-r{
               text-align: right;
             }
           }
-          .progress-bar-wrapper {
+          .progress-bar-wrapper{
             flex: 1;
           }
         }
