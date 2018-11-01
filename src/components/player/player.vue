@@ -86,7 +86,9 @@
           <h4 class="name">{{currentSong.singer}}</h4>
         </div>
         <div class="control">
-          <i class="icon-play" :class="playMiniIcon" @click.stop="togglePlay"></i>
+          <progress-circle :radius="radius" :percent="percent">
+            <i class="icon-mini" :class="playMiniIcon" @click.stop="togglePlay"></i>
+          </progress-circle>
         </div>
         <div class="control">
           <i class="icon-playlist"></i>
@@ -113,11 +115,12 @@
   import {playMode} from "../../assets/js/config";
   import Lyric from 'lyric-parser'
   import Scroll from "../../base/scroll/scroll";
+  import ProgressCircle from "../../base/progress-circle/progress-circle";
 
   const transform = prefixStyle('transform');
   export default {
     name: "play",
-    components: {Scroll, ProgressBar},
+    components: {ProgressCircle, Scroll, ProgressBar},
     computed: {
       playIcon() {
         return this.playing ? 'icon-pause' : 'icon-play'
@@ -152,7 +155,8 @@
         currentLyric: null,
         currentLineNum: 0,
         playingLyric: '',
-        currentShow: 'cd'
+        currentShow: 'cd',
+        radius: 32
       }
     },
     created() {
@@ -576,7 +580,7 @@
         left: 0;
         width: 100%;
         .dots-wrapper{
-          margin: 30px auto;
+          margin: 20px auto;
           text-align: center;
           font-size: 0;
           .dot{
@@ -711,13 +715,20 @@
         }
       }
       .control {
+        position: relative;
         flex: 0 0 60px;
         width: 60px;
         height: 60px;
         padding: 0 20px;
-        i {
+        .icon-play-mini, .icon-pause-mini, .icon-playlist {
           font-size: 60px;
-          color: $color-theme;
+          color: $color-theme-d;
+        }
+        .icon-mini {
+          font-size: 64px;
+          position: absolute;
+          left: 0;
+          top: 2px;
         }
       }
     }
