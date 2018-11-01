@@ -6,7 +6,7 @@
     <div class="title">{{title}}</div>
     <div class="bg-image" :style="bgStyle" ref="bgImage">
       <div class="play-btn-wrapper" ref="playBtn">
-        <div class="play-btn">
+        <div class="play-btn" @click="playRandom">
           <i class="icon-play"></i>
           <span class="text">随机播放全部</span>
         </div>
@@ -91,8 +91,13 @@
           index:index
         })
       },
+      /*随机播放全部*/
+      playRandom(){
+        this.randomPlay(this.songList);
+      },
       ...mapActions([
-        'selectPlay'
+        'selectPlay',
+        'randomPlay'
       ])
     },
     watch: {
