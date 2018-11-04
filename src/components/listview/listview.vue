@@ -40,10 +40,12 @@
   import Scroll from "../../base/scroll/scroll";
   import {getData} from "../../assets/js/dom";
   import Loading from "../../base/loading/loading";
+  import {playerMixin} from "../../assets/js/mixins";
 
   export default {
     name: "listview",
     components: {Loading, Scroll},
+    mixins: [playerMixin],
     props: {
       singerList: {
         type: Array,
@@ -103,8 +105,13 @@
       scroll(pos) {
         this.scrollY = pos.y;
       },
-      select(singer){
-        this.$emit('select',singer);
+      select(singer) {
+        this.$emit('select', singer);
+      },
+      handlePlaylist(list) {
+        const bottom = list.length>0?'50px':0;
+        this.$refs.listview.$el.style.bottom = bottom;
+        this.$refs.listview.refresh();
       },
       _scrollTo(index) {
         if (!index) {
@@ -162,8 +169,10 @@
   @import "./../../assets/scss/variable";
 
   .listview {
-    position: relative;
-    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
     width: 100%;
     overflow: hidden;
     .list-group {
@@ -236,10 +245,11 @@
       line-height: 60px;
     }
   }
-  .loading-container{
+
+  .loading-container {
     position: absolute;
     left: 50%;
     top: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
   }
 </style>

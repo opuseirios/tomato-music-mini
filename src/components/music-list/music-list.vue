@@ -20,6 +20,7 @@
       :listen-scroll="listenScroll"
       :probe-type="probeType"
       @scroll="scroll"
+      :data="songList"
     >
       <div class="song-list-wrapper">
         <song-list :song-list="songList" @select="selectItem"></song-list>
@@ -37,6 +38,7 @@
   import {prefixStyle} from "../../assets/js/dom";
   import Loading from "../../base/loading/loading";
   import {mapActions} from 'vuex'
+  import {playerMixin} from "../../assets/js/mixins";
 
   const transform = prefixStyle('transform');
   const backDrop = prefixStyle('backdrop-filter');
@@ -44,6 +46,7 @@
   export default {
     name: "music-list",
     components: {Loading, Scroll, SongList},
+    mixins: [playerMixin],
     props: {
       bgImage: {
         type: String,
@@ -85,15 +88,20 @@
       scroll(pos) {
         this.scrollY = pos.y;
       },
-      selectItem(item,index) {
+      selectItem(item, index) {
         this.selectPlay({
-          list:this.songList,
-          index:index
+          list: this.songList,
+          index: index
         })
       },
       /*随机播放全部*/
-      playRandom(){
+      playRandom() {
         this.randomPlay(this.songList);
+      },
+      handlePlaylist(list) {
+        const bottom = list.length > 0 ? '60px' : 0;
+        this.$refs.list.$el.style.bottom = bottom;
+        this.$refs.list.refresh();
       },
       ...mapActions([
         'selectPlay',

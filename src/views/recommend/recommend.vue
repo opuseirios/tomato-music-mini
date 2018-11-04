@@ -40,10 +40,12 @@
   import Slider from "../../base/slider/slider";
   import Scroll from "../../base/scroll/scroll";
   import Loading from "../../base/loading/loading";
+  import {playerMixin} from "../../assets/js/mixins";
 
   export default {
     name: 'recommend',
     components: {Loading, Scroll, Slider},
+    mixins:[playerMixin],
     created(){
       this._getRecommend();
       this._getDistList();
@@ -65,6 +67,11 @@
           this.$refs.scroll.refresh();
           this.checkLoaded=true;
         }
+      },
+      handlePlaylist(list){
+        const bottom = list.length>0?'60px':0;
+        this.$refs.recommend.style.bottom = bottom;
+        this.$refs.scroll.refresh();
       },
       _getRecommend(){
         getRecommendData().then((res)=>{
