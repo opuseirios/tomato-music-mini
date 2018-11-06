@@ -24,6 +24,19 @@
       listenScroll:{
         type:Boolean,
         default:false
+      },
+      /*上拉刷新*/
+      pullUp:{
+        type:Boolean,
+        default:false
+      },
+      beforeScroll:{
+        type:Boolean,
+        default:false
+      },
+      refreshDelay:{
+        type:Number,
+        default:20
       }
     },
     created(){
@@ -40,6 +53,19 @@
         if(this.listenScroll){
           this.scroll.on('scroll',(pos)=>{
             this.$emit('scroll',pos);
+          })
+        }
+        /*判断上啦刷新*/
+        if(this.pullUp){
+          this.scroll.on('scrollEnd',()=>{
+            if(this.scroll.y<=(this.scroll.maxScrollY+50)){
+              this.$emit('scrollToEnd')
+            }
+          })
+        }
+        if(this.beforeScroll){
+          this.scroll.on('beforeScrollStart',()=>{
+            this.$emit('beforeScroll');
           })
         }
       },
@@ -63,7 +89,7 @@
       data(){
         setTimeout(()=>{
           this.refresh();
-        },20)
+        },this.refreshDelay)
       }
     }
   }

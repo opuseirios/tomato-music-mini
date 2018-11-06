@@ -4,20 +4,34 @@
       <search-box ref="searchBox" @query="onQueryChange"></search-box>
     </div>
     <div class="shortcut-wrapper" v-show="!query">
-      <div class="shortcut">
-        <div class="hot-key">
-          <h3 class="title">热门搜索</h3>
-          <ul>
-            <li class="item" v-for="item in hotKeys" @click="selectHotKey(item.k)">
-              <span>{{item.k}}</span>
-            </li>
-          </ul>
+      <scroll class="shortcut" :refresh-delay="refreshDelay" :data="shortcut" ref="shortcut">
+        <div>
+          <div class="hot-key">
+            <h3 class="title">热门搜索</h3>
+            <ul>
+              <li class="item" v-for="item in hotKeys" @click="addQuery(item.k)">
+                <span>{{item.k}}</span>
+              </li>
+            </ul>
+          </div>
+          <div class="search-history" v-show="searchList.length">
+            <h3 class="title">
+              <span class="text">搜索历史</span>
+              <span class="clear" @click="showConfirm">
+              <i class="icon-clear"></i>
+            </span>
+            </h3>
+            <search-list :searches="searchList" @add="addQuery" @delete="deleteSearchHistory"></search-list>
+          </div>
         </div>
-      </div>
+
+      </scroll>
     </div>
     <div class="search-result" v-show="query">
-      <suggest :query="query"></suggest>
+      <suggest :query="query" :show-singer="showSigner" ref="suggest" @select="saveSearchList"></suggest>
     </div>
+    <router-view></router-view>
+    <confirm ref="confirm" text="是否清空所有搜索历史？" confirm-btn-text="清空" @confirm="clearSearchHistory"></confirm>
   </div>
 </template>
 
@@ -26,32 +40,67 @@
   import {getHotkeyData} from "../../api/search";
   import {ERR_OK} from "../../api/config";
   import Suggest from "../../components/suggest/suggest";
+  import {mapActions, mapGetters} from 'vuex';
+  import SearchList from "../../base/search-list/search-list";
+  import Scroll from "../../base/scroll/scroll";
+  import Confirm from "../../base/confirm/confirm";
 
   export default {
     name: 'search',
-    components: {Suggest, SearchBox},
-    data(){
-      return{
-        hotKeys:[],
-        query:''
+    components: {Confirm, Scroll, SearchList, Suggest, SearchBox},
+    data() {
+      return {
+        hotKeys: [],
+        query: '',
+        showSigner: true,
+        refreshDelay: 100
       }
     },
-    created(){
+    computed: {
+      shortcut() {
+        return this.hotKeys.concat(this.searchList);
+      },
+      ...mapGetters([
+        'searchList'
+      ])
+    },
+    created() {
       this._getHotKeys();
     },
-    methods:{
-      selectHotKey(key){
+    methods: {
+      addQuery(key) {
         this.$refs.searchBox.addQuery(key);
       },
-      onQueryChange(query){
+      onQueryChange(query) {
         this.query = query;
       },
-      _getHotKeys(){
-        getHotkeyData().then((res)=>{
-          if(res.code === ERR_OK){
-            this.hotKeys = res.data.hotkey.slice(0,10);
+      saveSearchList() {
+        this.saveSearchHistory(this.query);
+      },
+      showConfirm() {
+        console.log(1);
+        this.$refs.confirm.show();
+      },
+      _getHotKeys() {
+        getHotkeyData().then((res) => {
+          if (res.code === ERR_OK) {
+            this.hotKeys = res.data.hotkey.slice(0, 10);
           }
         })
+      },
+      ...mapActions([
+        'saveSearchHistory',
+        'deleteSearchHistory',
+        'clearSearchHistory'
+      ])
+    },
+    watch: {
+      query(newQuery) {
+        if (!newQuery) {
+          setTimeout(() => {
+            this.$refs.shortcut.refresh()
+          }, 20)
+        }
       }
     }
   }
@@ -59,28 +108,29 @@
 
 <style lang='scss' scoped>
   @import "./../../assets/scss/variable";
+  @import "./../../assets/scss/mixin";
 
   .search {
-    .search-box-wrapper{
+    .search-box-wrapper {
       margin: 40px;
     }
-    .shortcut-wrapper{
+    .shortcut-wrapper {
       position: fixed;
       left: 0;
       right: 0;
       top: 356px;
       bottom: 0;
-      .shortcut{
+      .shortcut {
         height: 100%;
         overflow: hidden;
-        .hot-key{
+        .hot-key {
           margin: 0 40px 40px 40px;
-          .title{
+          .title {
             margin-bottom: 40px;
             font-size: $font-size-medium;
             color: $color-text-l;
           }
-          .item{
+          .item {
             display: inline-block;
             padding: 10px 20px;
             margin: 0 40px 20px 0;
@@ -90,9 +140,30 @@
             color: $color-text-d;
           }
         }
+        .search-history {
+          position: relative;
+          margin: 0 40px;
+          .title {
+            display: flex;
+            align-items: center;
+            height: 80px;
+            font-size: $font-size-medium;
+            color: $color-text-l;
+            .text {
+              flex: 1;
+            }
+            .clear {
+              @include extend-click();
+              .icon-clear {
+                font-size: $font-size-medium;
+                color: $color-text-d;
+              }
+            }
+          }
+        }
       }
     }
-    .search-result{
+    .search-result {
       position: fixed;
       left: 0;
       right: 0;

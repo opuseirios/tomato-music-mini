@@ -6,7 +6,7 @@
           <slider v-if="slider.length>0">
             <div v-for="item in slider">
               <a :href="item.linkUrl">
-                <img @load="loadImage"  v-lazy="item.picUrl" alt="">
+                <img @load="loadImage"  :src="item.picUrl" alt="">
               </a>
             </div>
           </slider>

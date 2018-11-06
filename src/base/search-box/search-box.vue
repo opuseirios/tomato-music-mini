@@ -7,6 +7,8 @@
 </template>
 
 <script>
+  import {debounce} from "../../assets/js/util";
+
   export default {
     name: "search-box",
     data() {
@@ -21,9 +23,9 @@
       }
     },
     created() {
-      this.$watch('query', (newQuery) => {
+      this.$watch('query', debounce((newQuery) => {
         this.$emit('query', newQuery)
-      })
+      },200));
     },
     methods: {
       clearQuery() {

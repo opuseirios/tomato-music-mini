@@ -1,7 +1,14 @@
 <template>
-  <scroll class='suggest' :data="result">
+  <scroll class='suggest'
+          :data="result"
+          ref="suggest"
+          :pull-up="pullUp"
+          @scrollToEnd="searchMore"
+          :before-scroll="beforeScroll"
+          @beforeScroll="listScroll"
+  >
     <ul class="suggest-list">
-      <li class="suggest-item" v-for="item in result">
+      <li class="suggest-item" v-for="item in result" @click="selectItem(item)">
         <div class="icon">
           <i :class="getIconCls(item)"></i>
         </div>
@@ -9,7 +16,11 @@
           <p class="text" v-html="getDisplayName(item)"></p>
         </div>
       </li>
+      <loading v-show="this.hasMore" text=""></loading>
     </ul>
+    <div class="no-result-wrapper" v-show="!hasMore&&!result.length">
+      <no-result text="抱歉，暂无搜索结果"></no-result>
+    </div>
   </scroll>
 </template>
 
@@ -18,12 +29,17 @@
   import {ERR_OK} from "../../api/config";
   import {createSong} from "../../assets/js/song";
   import Scroll from "../../base/scroll/scroll";
+  import Loading from "../../base/loading/loading";
+  import NoResult from "../../base/no-result/no-result";
+  import {Singer} from "../../assets/js/singer";
+  import {mapActions,mapMutations} from 'vuex';
 
-  const TYPE_SINGER = 'singer'
+  const TYPE_SINGER = 'singer';
+  const PER_PAGE = 20;
 
   export default {
     name: "suggest",
-    components: {Scroll},
+    components: {NoResult, Loading, Scroll},
     props: {
       query: {
         type: String,
@@ -33,19 +49,28 @@
         type: Boolean,
         default: false
       },
-
     },
     data() {
       return {
-        result: []
+        result: [],
+        hasMore:true,
+        page:1,
+        pullUp:true,
+        beforeScroll:true
       }
     },
     methods: {
+      refresh(){
+        this.$refs.suggest.refresh();
+      },
       search() {
-        getSearchResult(this.query, this.showSinger).then((res) => {
+        this.page = 1;
+        this.hasMore = true;
+        this.$refs.suggest.scrollTo(0,0);
+        getSearchResult(this.query, this.showSinger,this.page,PER_PAGE).then((res) => {
           if (res.code === ERR_OK) {
             this.result = this._genResult(res.data);
-            console.log(this.result);
+            this._checkMore(res.data);
           }
         });
       },
@@ -63,6 +88,42 @@
           return `${item.name}-${item.singer}`
         }
       },
+      searchMore(){
+        if(!this.hasMore){
+          return;
+        }
+        this.page++;
+        getSearchResult(this.query, this.showSinger,this.page,PER_PAGE).then((res) => {
+          if (res.code === ERR_OK) {
+            let data = this._genResult(res.data);
+            if(data.length>PER_PAGE){
+              data = data.slice(1);
+            }
+            this.result = this.result.concat(data);
+            this._checkMore(res.data);
+          }
+        });
+      },
+      listScroll(){
+        this.$emit('listScroll');
+      },
+      selectItem(item){
+        /*如果选择歌手*/
+        if(item.type === TYPE_SINGER){
+          const singer = new Singer({
+            mid:item.singermid,
+            name:item.singername
+          })
+          this.$router.push({
+            path:`/search/${singer.mid}`
+          })
+          this.setSinger(singer);
+        }else {
+          this.insertSong(item);
+        }
+        this.$emit('select')
+      },
+      /*将数据分为歌手和歌曲两部分*/
       _genResult(data) {
         let ret = [];
         if (data.zhida && data.zhida.singerid) {
@@ -79,7 +140,19 @@
           ret.push(createSong(item))
         })
         return ret;
-      }
+      },
+      _checkMore(data){
+        const song = data.song;
+        if(!song.list.length||(song.curnum+song.curpage*PER_PAGE)>song.totalnum){
+          this.hasMore = false;
+        }
+      },
+      ...mapMutations({
+        setSinger:'SET_SINGER'
+      }),
+      ...mapActions([
+        'insertSong'
+      ])
     },
     watch: {
       query(newQuery) {
