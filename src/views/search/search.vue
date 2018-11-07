@@ -3,7 +3,7 @@
     <div class="search-box-wrapper">
       <search-box ref="searchBox" @query="onQueryChange"></search-box>
     </div>
-    <div class="shortcut-wrapper" v-show="!query">
+    <div class="shortcut-wrapper" v-show="!query" ref="shorcutWrapper">
       <scroll class="shortcut" :refresh-delay="refreshDelay" :data="shortcut" ref="shortcut">
         <div>
           <div class="hot-key">
@@ -27,7 +27,7 @@
 
       </scroll>
     </div>
-    <div class="search-result" v-show="query">
+    <div class="search-result" v-show="query"  ref="searchResult">
       <suggest :query="query" :show-singer="showSigner" ref="suggest" @select="saveSearchList"></suggest>
     </div>
     <router-view></router-view>
@@ -44,10 +44,12 @@
   import SearchList from "../../base/search-list/search-list";
   import Scroll from "../../base/scroll/scroll";
   import Confirm from "../../base/confirm/confirm";
+  import {playerMixin} from "../../assets/js/mixins";
 
   export default {
     name: 'search',
     components: {Confirm, Scroll, SearchList, Suggest, SearchBox},
+    mixins:[playerMixin],
     data() {
       return {
         hotKeys: [],
@@ -68,6 +70,13 @@
       this._getHotKeys();
     },
     methods: {
+      handlePlaylist(playlist){
+        const bottom = playlist.length>0?'60px':0;
+        this.$refs.shorcutWrapper.style.bottom = bottom;
+        this.$refs.searchResult.style.bottom = bottom;
+        this.$refs.shortcut.refresh();
+        this.$refs.suggest.refresh();
+      },
       addQuery(key) {
         this.$refs.searchBox.addQuery(key);
       },

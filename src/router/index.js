@@ -4,7 +4,6 @@ import Recommend from './../views/recommend/recommend'
 import Singer from './../views/singer/singer'
 import Rank from './../views/rank/rank'
 import Search from './../views/search/search'
-import Radio from './../views/radio/radio'
 import SingerDetail from './../components/singer-detail/singer-detail'
 import Disc from './../components/disc/disc'
 
@@ -49,10 +48,6 @@ export default new Router({
           component:SingerDetail
         }
       ]
-    },
-    {
-      path: '/radio',
-      component: Radio
     }
   ]
 })

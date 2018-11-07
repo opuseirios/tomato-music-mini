@@ -91,10 +91,11 @@
           </progress-circle>
         </div>
         <div class="control">
-          <i class="icon-playlist"></i>
+          <i class="icon-playlist" @click.stop="showPlaylist"></i>
         </div>
       </div>
     </transition>
+    <playlist ref="playlist"></playlist>
     <audio
       ref="audio"
       :src="currentSong.url"
@@ -111,16 +112,18 @@
   import animations from 'create-keyframe-animation'
   import {prefixStyle} from "../../assets/js/dom";
   import ProgressBar from "../../base/progress-bar/progress-bar";
-  import {shuffle} from "../../assets/js/shuffle";
   import {playMode} from "../../assets/js/config";
   import Lyric from 'lyric-parser'
   import Scroll from "../../base/scroll/scroll";
   import ProgressCircle from "../../base/progress-circle/progress-circle";
+  import Playlist from "../playlist/playlist";
+  import {playlistMixin} from "../../assets/js/mixins";
 
   const transform = prefixStyle('transform');
   export default {
     name: "play",
-    components: {ProgressCircle, Scroll, ProgressBar},
+    mixins:[playlistMixin],
+    components: {Playlist, ProgressCircle, Scroll, ProgressBar},
     computed: {
       playIcon() {
         return this.playing ? 'icon-pause' : 'icon-play'
@@ -134,17 +137,9 @@
       percent() {
         return this.currentTime / this.currentSong.duration;
       },
-      modeIcon() {
-        return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random';
-      },
       ...mapGetters([
-        'currentSong',
-        'playlist',
-        'currentIndex',
-        'sequenceList',
         'fullScreen',
         'playing',
-        'mode'
       ])
     },
     data() {
@@ -264,7 +259,7 @@
         if (!this.songReady) {
           return;
         }
-        this.setPlaying(!this.playing);
+        this.setPlayingState(!this.playing);
         if (this.currentLyric) {
           this.currentLyric.togglePlay()
         }
@@ -360,25 +355,8 @@
         }
         this.playingLyric = txt;
       },
-      /*更换播放模式*/
-      changeMode() {
-        const mode = (this.mode + 1) % 3;
-        this.setPlayMode(mode);
-        let list = null;
-        if (mode === playMode.random) {
-          list = shuffle(this.sequenceList)
-        } else {
-          list = this.sequenceList;
-        }
-        this._resetCurrentIndex(list);
-        this.setPlayList(list);
-      },
-      /*更换模式后，找到当前播放歌曲的索引*/
-      _resetCurrentIndex(list) {
-        let index = list.findIndex((item) => {
-          return item.id === this.currentSong.id;
-        })
-        this.setCurrentIndex(index);
+      showPlaylist(){
+        this.$refs.playlist.show();
       },
       _getPosAndScale() {
         const targetWidth = 40;
@@ -408,10 +386,6 @@
       },
       ...mapMutations({
         setFullScreen: "SET_FULL_SCREEN",
-        setPlaying: "SET_PLAYING_STATE",
-        setCurrentIndex: 'SET_CURRENT_INDEX',
-        setPlayMode: 'SET_PLAY_MODE',
-        setPlayList: 'SET_PLAY_LIST'
       })
     },
     watch: {
