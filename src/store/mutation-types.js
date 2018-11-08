@@ -18,3 +18,5 @@ export const SET_DISC = 'SET_DISC';
 export const SET_SEARCH_LIST = 'SET_SEARCH_LIST';
 
 export const SET_PLAY_HISTORY = 'SET_PLAY_HISTORY';
+
+export const SET_FAVORITE_LIST = 'SET_FAVORITE_LIST';

@@ -1,5 +1,5 @@
 import {playMode} from "../assets/js/config";
-import {loadSearch,loadPlay} from "../assets/js/cache";
+import {loadSearch,loadPlay,loadFavorite} from "../assets/js/cache";
 
 const state = {
   /*歌手*/
@@ -23,6 +23,8 @@ const state = {
   searchList:loadSearch(),
   /*播放列表*/
   playHistory:loadPlay(),
+  /*收藏列表*/
+  favoriteList:loadFavorite()
 }
 
 export default state;

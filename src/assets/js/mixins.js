@@ -60,12 +60,28 @@ export const playlistMixin = {
       })
       this.setCurrentIndex(index);
     },
+    getFavoriteIcon(song){
+      return this.isFavorite(song)?'icon-favorite':'icon-not-favorite'
+    },
+    toggleFavorite(song){
+      this.isFavorite(song)?this.deleteFavoriteList(song):this.saveFavoriteList(song);;
+    },
+    isFavorite(song){
+      const index = this.favoriteList.findIndex((item)=>{
+        return item.id === song.id;
+      })
+      return index>-1;
+    },
     ...mapMutations({
       setCurrentIndex: 'SET_CURRENT_INDEX',
       setPlayingState: 'SET_PLAYING_STATE',
       setPlayMode: "SET_PLAY_MODE",
       setPlayList: "SET_PLAY_LIST"
     }),
+    ...mapActions([
+      'saveFavoriteList',
+      'deleteFavoriteList'
+    ])
   }
 }
 

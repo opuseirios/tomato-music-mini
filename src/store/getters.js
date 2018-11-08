@@ -19,3 +19,5 @@ export const disc = state => state.disc;
 export const searchList = state => state.searchList;
 
 export const playHistory = state => state.playHistory;
+
+export const favoriteList = state => state.favoriteList;
