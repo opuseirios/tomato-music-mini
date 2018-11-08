@@ -31,9 +31,12 @@
       clearQuery() {
         this.query = '';
       },
-      addQuery(query){
+      setQuery(query){
         this.query = query;
-      }
+      },
+      blur(){
+        this.$refs.query.blur();
+      },
     }
   }
 </script>

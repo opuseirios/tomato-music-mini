@@ -1,5 +1,5 @@
 import {playMode} from "../assets/js/config";
-import {loadSearch} from "../assets/js/cache";
+import {loadSearch,loadPlay} from "../assets/js/cache";
 
 const state = {
   /*歌手*/
@@ -20,7 +20,9 @@ const state = {
   /*歌单*/
   disc:{},
   /*搜索记录*/
-  searchList:loadSearch()
+  searchList:loadSearch(),
+  /*播放列表*/
+  playHistory:loadPlay(),
 }
 
 export default state;

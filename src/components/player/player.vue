@@ -108,7 +108,7 @@
 </template>
 
 <script>
-  import {mapGetters, mapMutations} from 'vuex';
+  import {mapGetters, mapMutations,mapActions} from 'vuex';
   import animations from 'create-keyframe-animation'
   import {prefixStyle} from "../../assets/js/dom";
   import ProgressBar from "../../base/progress-bar/progress-bar";
@@ -305,6 +305,8 @@
       /*audio标签就绪的函数*/
       ready() {
         this.songReady = true;
+        /*写入播放记录*/
+        this.savePlayHistory(this.currentSong);
       },
       /*audio标签错误的函数*/
       error() {
@@ -386,7 +388,10 @@
       },
       ...mapMutations({
         setFullScreen: "SET_FULL_SCREEN",
-      })
+      }),
+      ...mapActions([
+        'savePlayHistory'
+      ])
     },
     watch: {
       currentSong(newSong, oldSong) {

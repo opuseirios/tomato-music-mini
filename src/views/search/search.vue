@@ -44,27 +44,22 @@
   import SearchList from "../../base/search-list/search-list";
   import Scroll from "../../base/scroll/scroll";
   import Confirm from "../../base/confirm/confirm";
-  import {playerMixin} from "../../assets/js/mixins";
+  import {playerMixin,searchMixin} from "../../assets/js/mixins";
 
   export default {
     name: 'search',
     components: {Confirm, Scroll, SearchList, Suggest, SearchBox},
-    mixins:[playerMixin],
+    mixins:[playerMixin,searchMixin],
     data() {
       return {
         hotKeys: [],
-        query: '',
-        showSigner: true,
-        refreshDelay: 100
+        showSigner: true
       }
     },
     computed: {
       shortcut() {
         return this.hotKeys.concat(this.searchList);
-      },
-      ...mapGetters([
-        'searchList'
-      ])
+      }
     },
     created() {
       this._getHotKeys();
@@ -77,17 +72,8 @@
         this.$refs.shortcut.refresh();
         this.$refs.suggest.refresh();
       },
-      addQuery(key) {
-        this.$refs.searchBox.addQuery(key);
-      },
-      onQueryChange(query) {
-        this.query = query;
-      },
-      saveSearchList() {
-        this.saveSearchHistory(this.query);
-      },
+
       showConfirm() {
-        console.log(1);
         this.$refs.confirm.show();
       },
       _getHotKeys() {
@@ -98,8 +84,6 @@
         })
       },
       ...mapActions([
-        'saveSearchHistory',
-        'deleteSearchHistory',
         'clearSearchHistory'
       ])
     },

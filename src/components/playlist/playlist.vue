@@ -26,7 +26,7 @@
           </ul>
         </scroll>
         <div class="list-operate">
-          <div class="add">
+          <div class="add" @click="showAddSong">
             <i class="icon-add"></i>
             <span class="text">添加歌曲列表</span>
           </div>
@@ -36,6 +36,7 @@
         </div>
       </div>
       <confirm ref="confirm" text="是否清空播放列表" confirm-btn-text="清空" @confirm="confirmClear"></confirm>
+      <add-song ref="addSong"></add-song>
     </div>
   </transition>
 </template>
@@ -46,10 +47,11 @@
   import {playlistMixin} from "../../assets/js/mixins";
   import {mapActions} from 'vuex'
   import Confirm from "../../base/confirm/confirm";
+  import AddSong from "../add-song/add-song";
 
   export default {
     name: "playlist",
-    components: {Confirm, Scroll},
+    components: {AddSong, Confirm, Scroll},
     mixins: [playlistMixin],
     computed: {
       modeText() {
@@ -107,6 +109,9 @@
       confirmClear() {
         this.deleteSonglist();
         this.hide();
+      },
+      showAddSong(){
+        this.$refs.addSong.show();
       },
       ...mapActions([
         'deleteSong',

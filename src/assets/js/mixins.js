@@ -26,7 +26,6 @@ export const playerMixin = {
   }
 }
 
-
 export const playlistMixin = {
   computed: {
     modeIcon() {
@@ -34,6 +33,7 @@ export const playlistMixin = {
     },
     ...mapGetters([
       'sequenceList',
+      'currentIndex',
       'currentSong',
       'playlist',
       'mode',
@@ -66,5 +66,37 @@ export const playlistMixin = {
       setPlayMode: "SET_PLAY_MODE",
       setPlayList: "SET_PLAY_LIST"
     }),
+  }
+}
+
+export const searchMixin = {
+  computed:{
+    ...mapGetters([
+      'searchList'
+    ])
+  },
+  data(){
+    return{
+      query: '',
+      refreshDelay: 100
+    }
+  },
+  methods:{
+    addQuery(key) {
+      this.$refs.searchBox.setQuery(key);
+    },
+    onQueryChange(query) {
+      this.query = query;
+    },
+    saveSearchList() {
+      this.saveSearchHistory(this.query);
+    },
+    blurInput(){
+      this.$refs.searchBox.blur();
+    },
+    ...mapActions([
+      'saveSearchHistory',
+      'deleteSearchHistory',
+    ])
   }
 }

@@ -27,6 +27,9 @@ const mutations = {
   },
   [types.SET_SEARCH_LIST](state,list){
     state.searchList = list;
+  },
+  [types.SET_PLAY_HISTORY](state,list){
+    state.playHistory = list;
   }
 }
 
