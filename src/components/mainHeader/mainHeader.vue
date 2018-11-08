@@ -4,9 +4,9 @@
         <i class="icon-logo"></i>
         <h3 class="title">Tomato Music</h3>
       </div>
-      <div class="user">
+      <router-link tag="div" class="user" to="/user">
         <i class="icon-mine"></i>
-      </div>
+      </router-link>
     </div>
 </template>
 
