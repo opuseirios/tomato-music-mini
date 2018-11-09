@@ -70,7 +70,7 @@
               <i class="icon-next" @click="next"></i>
             </div>
             <div class="icon i-right">
-              <i :class="getFavoriteIcon(currentSong)" @click="toggleFavorite(currentSong)"></i>
+              <i :class="getFavoriteIcon(currentSong)" @click="toggleFavorite( currentSong)"></i>
             </div>
           </div>
         </div>
@@ -321,21 +321,17 @@
         }
       },
       /*audio的实时*/
-      updateTime() {
-        const audio = this.$refs.audio;
-        if (audio) {
-          this.currentTime = audio.currentTime;
-          /*歌词同步*/
-          if (this.currentLyric) {
-            this.currentLyric.seek(this.currentTime * 1000);
-          }
-        }
+      updateTime(e) {
+        this.currentTime = e.target.currentTime;
       },
       percentChange(percent) {
         let time = percent * this.currentSong.duration;
         this.$refs.audio.currentTime = time;
         if (!this.playing) {
           this.togglePlay();
+        }
+        if (this.currentLyric) {
+          this.currentLyric.seek(this.currentTime * 1000);
         }
       },
       /*获取歌词*/
@@ -349,7 +345,7 @@
       },
       handleLyric({lineNum, txt}) {
         this.currentLineNum = lineNum;
-        if (lineNum > 5) {
+        if (lineNum >= 5) {
           let lineEl = this.$refs.lineEl[lineNum - 5];
           this.$refs.lyricList.scrollToElement(lineEl, 1000)
         } else {

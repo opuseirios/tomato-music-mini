@@ -5,11 +5,11 @@
 </template>
 
 <script>
-  import MusicList from "../music-list/music-list";
-  import {getDiscData} from "../../api/rank";
+  import MusicList from "../../../../components/music-list/music-list";
+  import {getDiscData} from "../../../../api/rank";
   import {mapGetters} from 'vuex'
-  import {ERR_OK} from "../../api/config";
-  import {createSong} from "../../assets/js/song";
+  import {ERR_OK} from "../../../../api/config";
+  import {createSong} from "../../../../assets/js/song";
 
   export default {
     name: "disc",
