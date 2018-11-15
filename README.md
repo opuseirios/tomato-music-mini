@@ -31,19 +31,19 @@
 
 
 ### 推荐
-![推荐] https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/recommend.png
-![推荐榜单] https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/disc.png
+![推荐](https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/recommend.png)
+![推荐榜单](https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/disc.png)
 
 ### 歌手
-![歌手] https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/singer.png
-![歌手详情页] https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/singerDetail.png
+![歌手](https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/singer.png)
+![歌手详情页](https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/singerDetail.png)
 
 ### 排行榜
-![排行] https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/rank.png
+![排行](https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/rank.png)
 
 ### 搜索
-![搜索1] https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/search1.png
-![搜索2] https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/search2.png
+![搜索1](https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/search1.png)
+![搜索2](https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/search2.png)
 
 ### 播放器
-![播放器] https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/player.png
+![播放器](https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/player.png)
