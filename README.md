@@ -1,7 +1,8 @@
 # tomato-music
-<p align="center">Vue 音乐搜索、播放 Demo，资源均来自QQ音乐</p>
 
 **建议直接扫码体验！**
+
+
 ![图片预览](https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/code.png)
 
 👉 项目演示地址:  http://47.99.46.179
@@ -57,6 +58,17 @@
 - `jsonp`：服务端通讯。抓取 QQ音乐数据
 - `axios`：服务端通讯。
 - `nginx`：搭建服务器，利用反向代理，将请求发送到Express上
+
+【其他】
+
+此应用的全部数据来自 QQ音乐
+
+全局通用的应用级状态使用 `vuex` 集中管理
+
+全局引入 `fastclick` 库，消除 click 移动浏览器300ms延迟
+
+页面是响应式的，适配常见的移动端屏幕，采用 `flex` 布局
+
 
 ## 收获
 
