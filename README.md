@@ -37,6 +37,12 @@
 
 ### 播放器
 ![播放器](https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/player.png)
+![歌词](https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/lyric.png)
+
+### 播放列表
+![播放列表](https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/playlist.png)
+
+
 
 ## 技术栈
 
