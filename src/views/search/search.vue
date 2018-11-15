@@ -40,7 +40,7 @@
   import {getHotkeyData} from "../../api/search";
   import {ERR_OK} from "../../api/config";
   import Suggest from "../../components/suggest/suggest";
-  import {mapActions, mapGetters} from 'vuex';
+  import {mapActions} from 'vuex';
   import SearchList from "../../base/search-list/search-list";
   import Scroll from "../../base/scroll/scroll";
   import Confirm from "../../base/confirm/confirm";

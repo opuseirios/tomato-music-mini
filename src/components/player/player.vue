@@ -310,7 +310,7 @@
       },
       /*audio标签错误的函数*/
       error() {
-        this.next();
+        this.songReady = true;
       },
       /*audio结束后*/
       end() {
@@ -638,15 +638,15 @@
       }
     }
     .mini-player {
+      display: flex;
+      align-items: center;
       position: fixed;
       left: 0;
-      right: 0;
       bottom: 0;
-      display: flex;
       z-index: 180;
-      opacity: 1;
+      width: 100%;
       height: 120px;
-      align-items: center;
+      opacity: 1;
       background: $color-highlight-background;
       &.mini-enter-active, &.mini-leave-active {
         transition: all .4s;
@@ -657,8 +657,6 @@
       .icon {
         flex: 0 0 80px;
         width: 80px;
-        height: 80px;
-        border-radius: 50%;
         padding: 0 20px 0 40px;
         img {
           width: 80px;
@@ -668,32 +666,35 @@
             animation: rotate 10s linear infinite;
           }
           &.pause {
+            -webkit-animation-play-state: paused;
+            -moz-animation-play-state: paused;
+            -o-animation-play-state: paused;
             animation-play-state: paused;
           }
         }
       }
       .text {
-        flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        .title {
-          color: $color-text;
-          font-size: $font-size-medium;
-          margin-bottom: 20px;
-          @include no-wrap();
-        }
+        flex: 1;
+        line-height: 40px;
+        overflow: hidden;
         .name {
-          color: $color-text-l;
-          font-size: $font-size-small;
+          margin-bottom: 4px;
           @include no-wrap();
+          font-size: $font-size-medium;
+          color: $color-text;
+        }
+        .desc {
+          @include no-wrap();
+          font-size: $font-size-small;
+          color: $color-text-d;
         }
       }
       .control {
-        position: relative;
         flex: 0 0 60px;
         width: 60px;
-        height: 60px;
         padding: 0 20px;
         .icon-play-mini, .icon-pause-mini, .icon-playlist {
           font-size: 60px;
@@ -703,7 +704,7 @@
           font-size: 64px;
           position: absolute;
           left: 0;
-          top: 2px;
+          top: 0;
         }
       }
     }

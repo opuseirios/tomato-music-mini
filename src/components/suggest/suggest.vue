@@ -28,6 +28,7 @@
   import {getSearchResult} from "../../api/search";
   import {ERR_OK} from "../../api/config";
   import {createSong} from "../../assets/js/song";
+  import {getVkey} from "../../api/song";
   import Scroll from "../../base/scroll/scroll";
   import Loading from "../../base/loading/loading";
   import NoResult from "../../base/no-result/no-result";
@@ -70,6 +71,7 @@
         getSearchResult(this.query, this.showSinger,this.page,PER_PAGE).then((res) => {
           if (res.code === ERR_OK) {
             this.result = this._genResult(res.data);
+            console.log(this.result);
             this._checkMore(res.data);
           }
         });
@@ -136,9 +138,16 @@
       },
       _normaliseSongs(list) {
         let ret = [];
-        list.forEach((item) => {
-          ret.push(createSong(item))
+        list.forEach((musicData) => {
+          // getVkey(musicData.songmid).then((res)=>{
+          //   if(res.code === ERR_OK){
+          //     let data = res.data.items[0];
+          //     let url = `http://dl.stream.qqmusic.qq.com/${data.filename}?vkey=${data.vkey}&guid=7332953645&fromtag=66`;
+              ret.push(createSong(musicData,''));
+            // }
+          // })
         })
+        console.log(ret);
         return ret;
       },
       _checkMore(data){

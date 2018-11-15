@@ -14,6 +14,7 @@
   import {getSongListData} from "../../api/singer";
   import {ERR_OK} from "../../api/config";
   import {createSong} from "../../assets/js/song";
+   import {getVkey} from "../../api/song";
 
   export default {
     name: "singer-detail",
@@ -57,11 +58,18 @@
         })
       },
       _normaliseSongList(list) {
-        let songs = [];
+        let ret = [];
         list.forEach((item) => {
-          songs.push(createSong(item.musicData))
+          const musicData = item.musicData;
+          getVkey(musicData.songmid).then((res)=>{
+            if(res.code === ERR_OK){
+              let data = res.data.items[0];
+              let url = `http://dl.stream.qqmusic.qq.com/${data.filename}?vkey=${data.vkey}&guid=7332953645&fromtag=66`;
+              ret.push(createSong(musicData,url));
+            }
+          })
         })
-        return songs;
+        return ret;
       }
     }
   }

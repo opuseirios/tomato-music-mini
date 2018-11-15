@@ -1,6 +1,8 @@
 import * as types from './mutation-types'
 import {shuffle} from "../assets/js/shuffle";
 import {playMode} from "../assets/js/config";
+import {ERR_OK} from "../api/config";
+import {getVkey} from "../api/song";
 import {saveSearch,deleteAllSearch,deleteSearch,savePlay,saveFavorite,deleteFavorite} from "../assets/js/cache";
 
 function findIndex(list,song) {
@@ -29,42 +31,49 @@ export const randomPlay = function ({commit,state},list) {
 }
 
 export const insertSong = function ({commit,state},song) {
-  let playlist = state.playlist.slice();
-  let sequenceList = state.sequenceList.slice();
-  let currentIndex = state.currentIndex;
-  /*记录当前歌曲*/
-  let currentSong = playlist[currentIndex];
-  /*查找当期那列表中是否有当前歌曲并返回索引*/
-  let fpIndex = findIndex(playlist,song);
-  currentIndex++;
-  /*插入这首歌到当前索引位置*/
-  playlist.splice(currentIndex,0,song);
-  /*如果已经包含这首歌*/
-  if(fpIndex>-1){
-    if(currentIndex>fpIndex){
-      playlist.splice(fpIndex,1);
-      currentIndex--
-    }else {
-      playlist.splice(fpIndex+1,1)
-    }
-  }
+  getVkey(song.mid).then(res=>{
+    if(res.code === ERR_OK) {
+      let data = res.data.items[0]
+      let url = `http://dl.stream.qqmusic.qq.com/${data.filename}?vkey=${data.vkey}&guid=7332953645&fromtag=66`
+      song['url'] = url
+      let playlist = state.playlist.slice();
+      let sequenceList = state.sequenceList.slice();
+      let currentIndex = state.currentIndex;
+      /*记录当前歌曲*/
+      let currentSong = playlist[currentIndex];
+      /*查找当期那列表中是否有当前歌曲并返回索引*/
+      let fpIndex = findIndex(playlist,song);
+      currentIndex++;
+      /*插入这首歌到当前索引位置*/
+      playlist.splice(currentIndex,0,song);
+      /*如果已经包含这首歌*/
+      if(fpIndex>-1){
+        if(currentIndex>fpIndex){
+          playlist.splice(fpIndex,1);
+          currentIndex--
+        }else {
+          playlist.splice(fpIndex+1,1)
+        }
+      }
 
-  let currentSIndex = findIndex(sequenceList,currentIndex)+1;
-  let fsIndex = findIndex(sequenceList, song);
-  sequenceList.splice(currentSIndex, 0, song);
-  if (fsIndex > -1) {
-    if (currentSIndex > fsIndex) {
-      sequenceList.splice(fsIndex, 1);
-    } else {
-      sequenceList.splice(fsIndex + 1, 1);
-    }
-  }
+      let currentSIndex = findIndex(sequenceList,currentIndex)+1;
+      let fsIndex = findIndex(sequenceList, song);
+      sequenceList.splice(currentSIndex, 0, song);
+      if (fsIndex > -1) {
+        if (currentSIndex > fsIndex) {
+          sequenceList.splice(fsIndex, 1);
+        } else {
+          sequenceList.splice(fsIndex + 1, 1);
+        }
+      }
 
-  commit(types.SET_PLAY_LIST,playlist);
-  commit(types.SET_SEQUENCE_LIST,sequenceList);
-  commit(types.SET_CURRENT_INDEX,currentIndex);
-  commit(types.SET_FULL_SCREEN, true);
-  commit(types.SET_PLAYING_STATE, true);
+      commit(types.SET_PLAY_LIST,playlist);
+      commit(types.SET_SEQUENCE_LIST,sequenceList);
+      commit(types.SET_CURRENT_INDEX,currentIndex);
+      commit(types.SET_FULL_SCREEN, true);
+      commit(types.SET_PLAYING_STATE, true);
+    }
+    })
 }
 
 

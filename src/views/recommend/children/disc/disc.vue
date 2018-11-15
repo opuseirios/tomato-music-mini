@@ -10,6 +10,7 @@
   import {mapGetters} from 'vuex'
   import {createSong} from "../../../../assets/js/song";
   import {ERR_OK} from "../../../../api/config";
+  import {getVkey} from "../../../../api/song";
 
   export default {
     components: {MusicList},
@@ -48,10 +49,14 @@
       },
       _normaliseSongs(list){
         let ret = [];
-        list.forEach((musicData)=>{
-          if(musicData.songid&&musicData.albumid){
-            ret.push(createSong(musicData))
-          }
+        list.forEach((musicData) => {
+          getVkey(musicData.songmid).then((res)=>{
+            if(res.code === ERR_OK){
+              let data = res.data.items[0];
+              let url = `http://dl.stream.qqmusic.qq.com/${data.filename}?vkey=${data.vkey}&guid=7332953645&fromtag=66`;
+              ret.push(createSong(musicData,url));
+            }
+          })
         })
         return ret;
       }

@@ -98,6 +98,22 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(e);
         })
       })
+      /*获取vkey*/
+      app.get('/api/vkey', function(req,res){
+        var url = 'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg'
+        axios.get(url, {
+          headers:{
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          var ret = response.data
+          res.json(ret)
+        }).catch((e) => {
+          console.log(e)
+        })
+      })
     },
     clientLogLevel: 'warning',
     historyApiFallback: {
