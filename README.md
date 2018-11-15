@@ -13,7 +13,7 @@
 </p>
 
 **建议直接扫码体验！**
-![图片预览]()
+![图片预览](https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/code.png)
 
 👉 项目演示地址:  http://47.99.46.179
 (PC端请在浏览器的移动模式下查看)
@@ -27,4 +27,23 @@
 6.记录搜索历史，播放历史
 7.收藏歌曲
 
+## 截图
 
+
+### 推荐
+![推荐] https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/recommend.png
+![推荐榜单] https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/disc.png
+
+### 歌手
+![歌手] https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/singer.png
+![歌手详情页] https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/singerDetail.png
+
+### 排行榜
+![排行] https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/rank.png
+
+### 搜索
+![搜索1] https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/search1.png
+![搜索2] https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/search2.png
+
+### 播放器
+![播放器] https://github.com/opuseirios/tomato-music-mini/blob/master/Screenshots/player.png
