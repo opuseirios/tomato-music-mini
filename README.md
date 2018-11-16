@@ -55,7 +55,7 @@
 - `vue-lazyload`：第三方图片懒加载库，优化页面加载速度
 - `vux`：基于 WeUI 和 Vue.js 的 移动端 UI 组件库,提供丰富的组件满足移动端(微信)页面常用业务需求
 - `better-scroll`：iscroll 的优化版，使移动端滑动体验更加流畅
-- `stylus and less`：css 预编译处理器
+- `scs postcss-px2rem`：css 预编译处理器
 - `ES6`：ECMAScript 新一代语法，模块化、解构赋值、Promise、Class 等方法非常好用
 
 【后端】
