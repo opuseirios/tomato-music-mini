@@ -12,10 +12,9 @@
     <router-link class="tab-item" tag="div" to="/search">
       <span class="item">搜索</span>
     </router-link>
-    <router-link class="tab-item" tag="div" to="/radio">
-      <span class="item">电台</span>
-    </router-link>
-
+    <!--<router-link class="tab-item" tag="div" to="/radio">-->
+      <!--<span class="item">电台</span>-->
+    <!--</router-link>-->
   </div>
 </template>
 
