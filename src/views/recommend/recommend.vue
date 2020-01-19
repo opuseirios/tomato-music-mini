@@ -1,33 +1,38 @@
 <template>
   <div class='recommend'>
-    <div v-if="recommends.length" class="slider">
-      <Slider>
-        <div v-for="item in recommends">
-          <a :href="item.linkUrl">
-            <img :src="item.picUrl" alt="">
-          </a>
+    <scroll ref="scroll" class="recommend-container" :data="distList">
+      <div>
+        <div v-if="recommends.length" class="slider">
+          <Slider>
+            <div v-for="item in recommends">
+              <a :href="item.linkUrl">
+                <img @load="loadImage" :src="item.picUrl" alt="">
+              </a>
+            </div>
+          </Slider>
         </div>
-      </Slider>
-    </div>
-    <div class="recommend-content">
-      <h4 class="title">热门歌单推荐</h4>
-      <ul>
-        <li class="item" v-for="item in distList">
-          <div class="icon">
-            <img :src="item.imgurl" alt="">
-          </div>
-          <div class="content">
-            <h4 class="creator">{{item.creator.name}}</h4>
-            <p class="name">{{item.dissname}}</p>
-          </div>
-        </li>
-      </ul>
-    </div>
+        <div class="recommend-content">
+          <h4 class="title">热门歌单推荐</h4>
+          <ul>
+            <li class="item" v-for="item in distList">
+              <div class="icon">
+                <img :src="item.imgurl" alt="">
+              </div>
+              <div class="content">
+                <h4 class="creator">{{item.creator.name}}</h4>
+                <p class="name">{{item.dissname}}</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </scroll>
   </div>
 </template>
 
 <script>
   import Slider from '../../base/slider/slider'
+  import Scroll from '../../base/scroll/scroll'
   import {getRecommendData,getDiscList} from "../../api/recommend";
   import {ERR_OK} from "../../api/config";
 
@@ -37,7 +42,7 @@
       this._getRecommend();
       this._getDiscList();
     },
-    components: {Slider},
+    components: {Scroll, Slider},
     data(){
       return{
         recommends:[],
@@ -56,11 +61,16 @@
       //获取首页歌单数据
       _getDiscList(){
         getDiscList().then(res=>{
-          console.log(res);
           if(res.code === ERR_OK){
             this.distList = res.data.list;
           }
         })
+      },
+      loadImage(){
+        if(!this.checkLoaded){
+          this.$refs.scroll.refresh()
+        }
+        this.checkLoaded = true;
       }
     }
   }

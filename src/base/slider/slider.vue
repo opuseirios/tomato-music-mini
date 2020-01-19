@@ -76,6 +76,9 @@
         this.dots = new Array(this.children.length);
       },
       _initSlider() {
+        if(!this.$refs.slider){
+          return;
+        }
         this.slider = new BScroll(this.$refs.slider, {
           scrollX: true,
           scrollY: false,
