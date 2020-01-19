@@ -11,6 +11,13 @@ fastclick.attach(document.body);
 /*引入lib-flexible*/
 import 'lib-flexible'
 
+//懒加载组件
+import VueLazyLoad from 'vue-lazyload'
+
+Vue.use(VueLazyLoad,{
+  loading:require('./assets/imgs/default.png')
+})
+
 Vue.config.productionTip = false
 
 import './assets/scss/index.scss'
