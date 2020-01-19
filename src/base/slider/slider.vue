@@ -108,6 +108,9 @@
           this.slider.goToPage(this.currentPageIndex, 0, 400)
         }, this.interval)
       }
+    },
+    destroyed(){
+      clearTimeout(this.timer);
     }
   }
 </script>
