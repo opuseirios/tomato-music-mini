@@ -11,7 +11,7 @@
       <li class="list-group" v-for="group in data" ref="group">
         <h4 class="title">{{group.title}}</h4>
         <ul>
-          <li class="list-group-item" v-for="item in group.items">
+          <li class="list-group-item" v-for="item in group.items" @click="selectItem(item)">
             <div class="icon">
               <img v-lazy="item.avatar" alt="">
             </div>
@@ -112,6 +112,9 @@
       //监听页面滚动
       scroll(pos) {
         this.scrollY = pos.y;
+      },
+      selectItem(item){
+        this.$emit('select',item);
       },
       _scrollTo(index) {
         if(!index&&index!==0){

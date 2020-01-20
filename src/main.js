@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import store from './store'
 
 /*引入fastclick，应用于整个页面*/
 import fastclick from 'fastclick'
@@ -26,6 +27,7 @@ import './assets/scss/index.scss'
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })
