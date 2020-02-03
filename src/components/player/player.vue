@@ -28,6 +28,13 @@
           </div>
         </div>
         <div class="bottom">
+          <div class="progress-wrapper">
+            <span class="time time-l">{{format(currentTime)}}</span>
+            <div class="progress-bar-wrapper">
+              <ProgressBar :percent="percent" @percentChange="changePercent"/>
+            </div>
+            <span class="time time-r">{{format(currentSong.duration)}}</span>
+          </div>
           <div class="operators">
             <div class="icon i-left">
               <i class="icon-sequence"></i>
@@ -65,7 +72,7 @@
         </div>
       </div>
     </transition>
-    <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error"/>
+    <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error" @timeupdate="timeUpdate"/>
   </div>
 </template>
 
@@ -73,6 +80,7 @@
   import {mapGetters, mapMutations} from 'vuex'
   import animations from 'create-keyframe-animation'
   import {prefixStyle} from "../../assets/js/dom";
+  import ProgressBar from '../../base/progress-bar/progress-bar'
 
   const transform = prefixStyle('transform');
 
@@ -80,9 +88,11 @@
     name: "player",
     data() {
       return {
-        songReady: false
+        songReady: false,
+        currentTime: 0,
       }
     },
+    components: {ProgressBar},
     computed: {
       iconPlay() {
         return !this.playing ? 'icon-play' : 'icon-pause'
@@ -95,6 +105,9 @@
       },
       disableCls() {
         return this.songReady ? '' : 'disable'
+      },
+      percent() {
+        return this.currentTime / this.currentSong.duration;
       },
       ...mapGetters([
         'fullScreen',
@@ -149,13 +162,13 @@
         this.$refs.cdWrapper.style.transition = '';
       },
       togglePlay() {
-        if(!this.songReady){
+        if (!this.songReady) {
           return;
         }
         this.setPlayState(!this.playing);
       },
       next() {
-        if(!this.songReady){
+        if (!this.songReady) {
           return;
         }
         let index = this.currentIndex + 1;
@@ -163,17 +176,23 @@
           index = 0;
         }
         this.setCurrentIndex(index);
+        if (!this.playing) {
+          this.togglePlay();
+        }
         this.songReady = false;
       },
       prev() {
-        if(!this.songReady){
+        if (!this.songReady) {
           return;
         }
         let index = this.currentIndex - 1;
         if (index === -1) {
-          index = this.playlist.length-1;
+          index = this.playlist.length - 1;
         }
         this.setCurrentIndex(index);
+        if (!this.playing) {
+          this.togglePlay();
+        }
         this.songReady = false;
       },
       ready() {
@@ -181,6 +200,29 @@
       },
       error() {
         this.songReady = true;
+      },
+      timeUpdate(e) {
+        this.currentTime = e.target.currentTime;
+      },
+      format(time) {
+        time = time | 0;
+        const m = time / 60 | 0;
+        const s = this._pad(time % 60);
+        return `${m}:${s}`
+      },
+      changePercent(percent) {
+        this.$refs.audio.currentTime = percent * this.currentSong.duration;
+        if (!this.playing) {
+          this.togglePlay();
+        }
+      },
+      _pad(num, n = 2) {
+        let len = num.toString().length;
+        while (len < n) {
+          num = '0' + num;
+          len++;
+        }
+        return num;
       },
       _getPosAndScale() {
         const targetWidth = 40;
