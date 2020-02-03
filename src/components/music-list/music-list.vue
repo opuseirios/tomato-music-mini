@@ -68,12 +68,12 @@
       this.listenScroll = true;
     },
     mounted() {
-      setTimeout(() => {
+      this.$nextTick(() => {
         this.imageHeight = this.$refs.bgImage.clientHeight;
         this.reserve_height = this.$refs.back.clientHeight;
         this.minTranslateY = -this.imageHeight + this.reserve_height;
         this.$refs.list.$el.style.top = `${this.imageHeight}px`
-      }, 20)
+      })
     },
     methods: {
       scroll(pos) {

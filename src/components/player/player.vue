@@ -1,63 +1,216 @@
 <template>
   <div class='player' v-if="playlist.length>0">
-    <div class="normal-player" v-show="fullScreen">
-      <div class="background">
-        <img :src="currentSong.image" alt="">
-      </div>
-      <div class="top">
-        <div class="back" @click="down">
-          <i class="icon-back"></i>
+    <transition
+      name="normal"
+      @enter="enter"
+      @after-enter="afterEnter"
+      @leave="leave"
+      @after-leave="afterLeave"
+    >
+      <div class="normal-player" v-show="fullScreen">
+        <div class="background">
+          <img :src="currentSong.image" alt="">
         </div>
-        <h1 class="title" v-html="currentSong.name"></h1>
-        <h4 class="name" v-html="currentSong.singer"></h4>
-      </div>
-      <div class="middle">
-        <div class="middle-l">
-          <div class="cd-wrapper">
-            <div class="cd">
-              <img :src="currentSong.image" alt="">
+        <div class="top">
+          <div class="back" @click="down">
+            <i class="icon-back"></i>
+          </div>
+          <h1 class="title" v-html="currentSong.name"></h1>
+          <h4 class="name" v-html="currentSong.singer"></h4>
+        </div>
+        <div class="middle">
+          <div class="middle-l">
+            <div class="cd-wrapper" ref="cdWrapper">
+              <div class="cd" :class="cdCls">
+                <img :src="currentSong.image" alt="">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bottom">
+          <div class="operators">
+            <div class="icon i-left">
+              <i class="icon-sequence"></i>
+            </div>
+            <div class="icon i-left" :class="disableCls">
+              <i class="icon-prev" @click="prev"></i>
+            </div>
+            <div class="icon i-center" :class="disableCls">
+              <i :class="iconPlay" @click="togglePlay"></i>
+            </div>
+            <div class="icon i-right" :class="disableCls">
+              <i class="icon-next" @click="next"></i>
+            </div>
+            <div class="icon i-right">
+              <i class="icon icon-not-favorite"></i>
             </div>
           </div>
         </div>
       </div>
-      <div class="bottom"></div>
-    </div>
-    <div class="mini-player" v-show="!fullScreen" @click="up">
-      <div class="icon">
-        <img :src="currentSong.image" alt="">
+    </transition>
+    <transition name="mini">
+      <div class="mini-player" v-show="!fullScreen" @click="up">
+        <div class="icon">
+          <img :class="cdCls" :src="currentSong.image" alt="">
+        </div>
+        <div class="text">
+          <h2 class="name" v-html="currentSong.name"></h2>
+          <p class="desc" v-html="currentSong.singer"></p>
+        </div>
+        <div class="control">
+          <i :class="iconMini" @click.stop="togglePlay"></i>
+        </div>
+        <div class="control">
+          <i class="icon-playlist"></i>
+        </div>
       </div>
-      <div class="text">
-        <h2 class="name" v-html="currentSong.name"></h2>
-        <p class="desc" v-html="currentSong.singer"></p>
-      </div>
-      <div class="control">
-        <i class="icon-playlist"></i>
-      </div>
-    </div>
+    </transition>
+    <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error"/>
   </div>
 </template>
 
 <script>
-  import {mapGetters,mapMutations} from 'vuex'
+  import {mapGetters, mapMutations} from 'vuex'
+  import animations from 'create-keyframe-animation'
+  import {prefixStyle} from "../../assets/js/dom";
+
+  const transform = prefixStyle('transform');
+
   export default {
     name: "player",
-    computed:{
+    data() {
+      return {
+        songReady: false
+      }
+    },
+    computed: {
+      iconPlay() {
+        return !this.playing ? 'icon-play' : 'icon-pause'
+      },
+      iconMini() {
+        return !this.playing ? 'icon-play-mini' : 'icon-pause-mini'
+      },
+      cdCls() {
+        return this.playing ? 'play' : 'play pause'
+      },
+      disableCls() {
+        return this.songReady ? '' : 'disable'
+      },
       ...mapGetters([
         'fullScreen',
         'playlist',
-        'currentSong'
+        'currentSong',
+        'playing',
+        'currentIndex'
       ])
     },
-    methods:{
-      down(){
+    methods: {
+      down() {
         this.setFullScreen(false);
       },
-      up(){
+      up() {
         this.setFullScreen(true);
       },
+      enter(el, done) {
+        const {x, y, scale} = this._getPosAndScale();
+        const animation = {
+          0: {
+            transform: `translate3d(${x}px,${y}px,0) scale(${scale})`
+          },
+          60: {
+            transform: `translate3d(0,0,0) scale(1.2)`
+          },
+          100: {
+            transform: `translate3d(0,0,0) scale(1)`
+          }
+        }
+        animations.registerAnimation({
+          name: 'move',
+          animation,
+          presets: {
+            duration: 400,
+            easing: 'linear'
+          }
+        })
+        animations.runAnimation(this.$refs.cdWrapper, 'move', done);
+      },
+      afterEnter() {
+        animations.unregisterAnimation('move');
+        this.$refs.cdWrapper.style.animation = '';
+      },
+      leave(el, done) {
+        const {x, y, scale} = this._getPosAndScale();
+        this.$refs.cdWrapper.style.transition = 'all .4s';
+        this.$refs.cdWrapper.style[transform] = `translate3d(${x}px,${y}px,0) scale(${scale})`
+        this.$refs.cdWrapper.addEventListener('transitionend', done);
+      },
+      afterLeave() {
+        this.$refs.cdWrapper.style[transform] = '';
+        this.$refs.cdWrapper.style.transition = '';
+      },
+      togglePlay() {
+        if(!this.songReady){
+          return;
+        }
+        this.setPlayState(!this.playing);
+      },
+      next() {
+        if(!this.songReady){
+          return;
+        }
+        let index = this.currentIndex + 1;
+        if (index === this.playlist.length) {
+          index = 0;
+        }
+        this.setCurrentIndex(index);
+        this.songReady = false;
+      },
+      prev() {
+        if(!this.songReady){
+          return;
+        }
+        let index = this.currentIndex - 1;
+        if (index === -1) {
+          index = this.playlist.length-1;
+        }
+        this.setCurrentIndex(index);
+        this.songReady = false;
+      },
+      ready() {
+        this.songReady = true;
+      },
+      error() {
+        this.songReady = true;
+      },
+      _getPosAndScale() {
+        const targetWidth = 40;
+        const paddingLeft = 40;
+        const paddingBottom = 30;
+        const paddingTop = 80;
+        const width = window.innerWidth * 0.8;
+        const scale = targetWidth / width;
+        const x = -(window.innerWidth / 2 - paddingLeft - targetWidth / 2);
+        const y = (window.innerHeight - targetWidth / 2 - paddingTop - paddingBottom - width / 2);
+        return {x, y, scale};
+      },
       ...mapMutations({
-        setFullScreen:'SET_FULL_SCREEN'
+        setFullScreen: 'SET_FULL_SCREEN',
+        setPlayState: 'SET_PLAY_STATE',
+        setCurrentIndex: 'SET_CURRENT_INDEX'
       })
+    },
+    watch: {
+      currentSong() {
+        this.$nextTick(() => {
+          this.$refs.audio.play();
+        })
+      },
+      playing(newPlaying) {
+        this.$nextTick(() => {
+          const audio = this.$refs.audio;
+          newPlaying ? audio.play() : audio.pause()
+        })
+      }
     }
   }
 </script>
@@ -198,20 +351,20 @@
         bottom: 100px;
         left: 0;
         width: 100%;
-        .dots-wrapper{
+        .dots-wrapper {
           margin: 20px auto;
           text-align: center;
           font-size: 0;
-          .dot{
+          .dot {
             display: inline-block;
             width: 16px;
             height: 16px;
             border-radius: 50%;
             background: $color-text-l;
-            &:last-child{
+            &:last-child {
               margin-left: 16px;
             }
-            &.active{
+            &.active {
               width: 40px;
               border-radius: 10px;
               background: $color-text;
@@ -246,6 +399,9 @@
           .icon {
             flex: 1;
             color: $color-theme;
+            &.disable {
+              color: $color-text-l
+            }
             i {
               font-size: 60px;
             }
